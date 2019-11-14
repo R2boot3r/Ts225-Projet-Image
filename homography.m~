@@ -1,0 +1,10 @@
+function [M2b] = homography(M1,H)
+
+s=1;
+M1b = [ [M1*s; s];
+
+M2b = H*M1b;
+if( M2b(); 
+
+end
+
