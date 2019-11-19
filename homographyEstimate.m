@@ -1,7 +1,7 @@
 function [H,A] = homographyEstimate(X1,Y1,X2,Y2,npoints)
 
-M2 = [X2 Y2];
-B = reshape(M2',[8,1]); 
+M2 = [X2 Y2]
+B = reshape(M2',[8,1])
 
 A = zeros(2*npoints);
 
@@ -12,8 +12,8 @@ end
 
 
 H = [A\B;1];
-
-H = reshape(H,[3,3]);
+%%H = A^-1
+H = reshape(H,[3,3]).';
 
 end
 
