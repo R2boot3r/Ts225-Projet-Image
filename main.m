@@ -13,8 +13,8 @@ figure, imshow(uint8(img_a_incruster));
 [h2,w2,~] = size(img_a_incruster);
 %[X2,Y2] = ginput(4);
 
- X2 = [0; w2; w2; 0];
- Y2 = [0; 0; h2; h2];
+ X2 = [1; w2; w2; 1];
+ Y2 = [1; 1; h2; h2];
 
 npoints = 4;
 
