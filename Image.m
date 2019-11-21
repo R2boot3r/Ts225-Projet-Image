@@ -24,7 +24,7 @@ classdef Image
             [obj.X1,obj.Y1] =ginput(4);
         end
         
-        function Homography(obj,H)
+        function obj = Homography(obj,H)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             % on va calculer d'abord les extremitï¿½ de l'image pour crï¿½e
@@ -37,41 +37,64 @@ classdef Image
             %calcule des positions extremes
             for i = 1:size(X,2)
                 v1 = [X(i); Y(i);s];
-                v2 = H*v1;
+                v2 = inv(H)*v1;
                 v3 = round(v2/v2(3,1));
                 X(i) = v3(1,1);     % on remplace les valeurs par les nouvelles calculer
                 Y(i) = v3(2,1);
             end
+            X
+            Y
+
             
             x_homography_max = max(X); % on rï¿½cupï¿½re les max pour avoir la dimension de l'image
             y_homography_max = max(Y);
+            x_homography_min = min(X);
+            y_homography_min = min(Y);
             
-            image_homography = zeros(y_homography_max,x_homography_max,obj.profondeur);
-            image_homography_mask = zeros(y_homography_max,x_homography_max,obj.profondeur);
+            x_largeur = abs(x_homography_max)+abs(x_homography_min);
+            y_hauteur = abs(y_homography_max)+ abs(y_homography_min);
             
-            for y = 1:obj.hauteur
-                for x = 1:obj.largeur
-                    v1 = [x;y;s];
+            
+            image_homography = zeros(y_hauteur,x_largeur,obj.profondeur);
+            size(image_homography)
+            image_homography_mask = zeros(y_hauteur,x_largeur,obj.profondeur);
+            
+            
+            for y = 1:y_hauteur
+                for x = 1:x_largeur
+                    %x = x+abs(x_homography_min;
+                    %y = y + y_homography_min;
+                    v1 = [x+x_homography_min;y+y_homography_min;s]; % a voir si on enlève la valeur absolue -
                     v2 = H*v1;
                     v3 = round(v2/v2(3,1));
-                    if( v3(2,1)<=0)
-                        v3(2,1) = 1;
+%                     if( v3(2,1)<=0)
+%                         v3(2,1) = 1;
+%                     end
+%                     if( v3(1,1)<=0)
+%                         v3(1,1) = 1;
+%                     end
+                    %v3(1,1) = v3(1,1)+abs(x_homography_min)+1;
+                    %v3(2,1) = v3(2,1) + abs(y_homography_min)+1;
+                    
+                    %image_homography(v3(2,1),v3(1,1),:) = obj.image_intensite(y,x,:);
+                    %image_homography_mask(v3(2,1),v3(1,1),:) = 255; % on met en blanc tout les pixels de l'image a mettre en binaire en vrai pour faire des opï¿½rations logique
+                    if ((( 1 <= v3(2,1)) && (v3(2,1)<= obj.hauteur)) && ((( 1 <= v3(1,1)) && (v3(1,1)<= obj.largeur))))
+                    
+                        image_homography(y,x,:) = obj.image_intensite(v3(2,1),v3(1,1),:);
+                        image_homography_mask(y,x,:) = 255; % on met en blanc tout les pixels de l'image a mettre en binaire en vrai pour faire des opï¿½rations logique
+                
                     end
-                    if( v3(1,1)<=0)
-                        v3(1,1) = 1;
-                    end
-                    image_homography(v3(2,1),v3(1,1),:) = obj.image_intensite(y,x,:);
-                    image_homography_mask(v3(2,1),v3(1,1),:) = 255; % on met en blanc tout les pixels de l'image a mettre en binaire en vrai pour faire des opï¿½rations logique
                 end
             end
-            setimage_intensite(image_homography);
+            %obj.setimage_intensite(image_homography);
             %obj.image_intensite =  image_homography;
             %obj.image_mask = image_homography_mask;
            
-            figure, imshow(uint8(image_homography))
-             
-            obj.hauteur = y_homography_max;
-            obj.largeur = x_homography_max;
+            figure, imshow(uint8(image_homography));
+            size(image_homography)
+            figure, imshow(uint8(image_homography_mask));
+            obj.hauteur = y_hauteur;
+            obj.largeur = x_largeur;
             
             
         end

@@ -20,7 +20,7 @@ b = Image('img6.jpg');
 
 
 
-b.Homography(inv(H));
+b.Homography(H);
 % % a.Homography(inv(H));
 %c.affichage();
-b.affichage();
+%b.affichage();
