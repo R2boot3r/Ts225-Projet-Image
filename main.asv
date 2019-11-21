@@ -3,7 +3,7 @@ addpath('./images');
 load('images/img_1.jpeg');
 
 
-img1 = double(imread('img_5.png'));
+img1 = double(imread('img_.png'));
 figure, imshow(uint8(img1));
 [X1,Y1] = ginput(4);
 

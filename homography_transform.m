@@ -1,13 +1,20 @@
-function [img_homography] = homography_transform(img1,img_a_incruster,H)
-[h1,w1,~] = size(img1);
+function [img_homography,img_mask] = homography_transform(img1,img_a_incruster,H,X1,Y1)
+[h1,w1,p1] = size(img1);
 [h2,w2,~] = size(img_a_incruster);
 s=1;
 
 img_homography = img1;
 %%figure, imshow(uint8(img_homography));
 
-for y=1:h1
-    for x=1:w1
+xmin = round(min(X1));
+xmax = round(max(X1));
+ymin = round(min(Y1));
+ymax = round(max(Y1));
+
+img_mask = zeros(h1,w1,p1);
+
+for y=ymin:ymax
+    for x=xmin:xmax
         v1 = [x;y;s];
         v2 = H*v1;
         v3 = round(v2/v2(3,1));
@@ -24,7 +31,8 @@ for y=1:h1
             % dans l'autre
             
             img_homography(y,x,:) = img_a_incruster(v3(2,1),v3(1,1),:);
-
+            img_mask(y,x,:) = 255;
+        
             
        
         end
@@ -33,4 +41,5 @@ for y=1:h1
     end
 
 end
+
 end
