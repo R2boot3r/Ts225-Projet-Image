@@ -3,13 +3,13 @@ classdef Image
     %   Detailed explanation goes here
     
     properties (SetAccess = private)
-        image_intensite,
-        image_mask,
-        largeur,
-        hauteur,
-        profondeur,
-        X1,
-        Y1;
+        image_intensite
+        image_mask
+        largeur
+        hauteur
+        profondeur
+        X1
+        Y1
     end
     
     methods
@@ -24,7 +24,7 @@ classdef Image
             [obj.X1,obj.Y1] =ginput(4);
         end
         
-        function Homography(obj,H)
+        function obj = Homography(obj,H)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             % on va calculer d'abord les extremit� de l'image pour cr�e
@@ -43,6 +43,9 @@ classdef Image
                 Y(i) = v3(2,1);
             end
             
+            X
+            Y
+            
             x_homography_max = max(X); % on r�cup�re les max pour avoir la dimension de l'image
             y_homography_max = max(Y);
             
@@ -53,26 +56,18 @@ classdef Image
                 for x = 1:obj.largeur
                     v1 = [x;y;s];
                     v2 = H*v1;
-                    v3 = round(v2/v2(3,1));
-                    if( v3(2,1)<=0)
-                        v3(2,1) = 1;
-                    end
-                    if( v3(1,1)<=0)
-                        v3(1,1) = 1;
-                    end
+                    v3 = round(v2/v2(3,1))
+                    if( v(
                     image_homography(v3(2,1),v3(1,1),:) = obj.image_intensite(y,x,:);
                     image_homography_mask(v3(2,1),v3(1,1),:) = 255; % on met en blanc tout les pixels de l'image a mettre en binaire en vrai pour faire des op�rations logique
                 end
             end
-            setimage_intensite(image_homography);
-            %obj.image_intensite =  image_homography;
-            %obj.image_mask = image_homography_mask;
+                       
+            obj.image_intensite =  image_homography;
+            obj.image_mask = image_homography_mask;
            
-            figure, imshow(uint8(image_homography))
-             
             obj.hauteur = y_homography_max;
             obj.largeur = x_homography_max;
-            
             
         end
         
@@ -83,9 +78,9 @@ classdef Image
         
         
         function affichage(obj)
-            
             figure, imshow(uint8(obj.image_intensite)); %% on affiche l'image
             
+            png
         end
         
         

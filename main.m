@@ -1,29 +1,26 @@
 clear, close all, clc
 addpath('./images');
-load('images/img_1.jpeg');
 
+%% APPLICATION HOMOGRAPHY
+%[img_homography, img_mask] = homography_transform('img7.jpg','img6.jpg'); %Projection
+% [img_homography] = homography_transform2('img7.jpg'); %Extraction
 
-img1 = double(imread('img_5.png'));
-figure, imshow(uint8(img1));
-[X1,Y1] = ginput(4);
+% il y a une rotation sur la gestion des vecteurs !!!!
 
-
-img_a_incruster = double(imread('img_a_incruster.jpeg'));
-figure, imshow(uint8(img_a_incruster));
-[h2,w2,~] = size(img_a_incruster);
-%[X2,Y2] = ginput(4);
-
- X2 = [1; w2; w2; 1];
- Y2 = [1; 1; h2; h2];
+% figure,imshow('img7.jpg');
 
 npoints = 4;
 
-%% ESTIMATION MATRICE HOMOGRAPHY
-[H,A] = homographyEstimate(X1,Y1,X2,Y2,npoints);
+a = Image('img7.jpg');
 
-%% APPLICATION HOMOGRAPHY
-[img_homography, img_mask] = homography_transform(img1,img_a_incruster,H,X1,Y1);
-figure, imshow(uint8(img_mask));
-figure, imshow(uint8(img_homography));
+b = Image('img6.jpg');
 
-% il y a une rotation sur la gestin des vecteurs !!!!
+
+[H] = homographyEstimate(a.getCoordx,a.getCoordy,b.getCoordx,b.getCoordy,npoints);
+
+
+
+b.Homography(inv(H));
+% % a.Homography(inv(H));
+%c.affichage();
+b.affichage();
