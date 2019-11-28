@@ -66,7 +66,7 @@ classdef Image < handle
             x_largeur = abs(x_homography_max-x_homography_min); %calcule des valeurs maximales
             y_hauteur = abs(y_homography_max-y_homography_min);
             
-            obj.Xliste = 1+x_homography_min:1:x_homography_max; % permet de décaller correctement les indices 
+            obj.Xliste = 1+x_homography_min:1:x_homography_max; % permet de dï¿½caller correctement les indices 
             obj.Yliste = 1+y_homography_min:1:y_homography_max;
             
             
@@ -80,7 +80,7 @@ classdef Image < handle
             for y = 1:y_hauteur
                 for x = 1:x_largeur
 
-                    v1 = [x+x_homography_min;y+y_homography_min;s]; % a voir si on enlève la valeur absolue -
+                    v1 = [x+x_homography_min;y+y_homography_min;s]; % a voir si on enlï¿½ve la valeur absolue -
                     v2 = H*v1;
                     v3 = round(v2/v2(3,1));
                     if ((( 1 <= v3(2,1)) && (v3(2,1)<= hauteur)) && ((( 1 <= v3(1,1)) && (v3(1,1)<= largeur))))
@@ -97,51 +97,68 @@ classdef Image < handle
            
 
             obj.coin1 = [y_homography_min,x_homography_min];
-            obj.coin2 = [y_homography_max,x_homography_max] ;
+            obj.coin2 = [y_homography_max,x_homography_max];
             
-            %obj.Xliste = 1+abs(x_homography_min):1:abs(x_homography_max); % permet de décaller correctement les indices 
+            %obj.Xliste = 1+abs(x_homography_min):1:abs(x_homography_max); % permet de dï¿½caller correctement les indices 
             %obj.Yliste = 1+abs(y_homography_min):1:abs(y_homography_max);
         end
         
-        function obj = fusion(image_a_fus)
-            [x_largeurboite,y_hauteurboite] = nvboite(obj.X1,obj.Y1,image_a_fus.X1,image_a_fus.Y1); % recupeeration de la taille maximale!
+        function obj = fusion(obj,image_a_fus)
+            xmax = max(max(obj.Xliste),max(a.Xliste));
+            xmin = min(min(obj.Xliste),min(a.Xliste));
+            ymax = max(max(obj.Yliste),max(image_a_fus.Yliste));
+            ymin = min(min(obj.Yliste),min(image_a_fus.Yliste));
             
-            image_boite_mask = zeros(y_hauteurboite,x_largeurboite,obj.profondeur);
+            xlargeur = abs(xmin-xmax);
+            ylargeur = abs(ymin-ymax);
+            x_largeurboite = xlargeur;
+            y_hauteurboite = ylargeur;
+%             [x_largeurboite,y_hauteurboite] = nvboite(obj.X1,obj.Y1,image_a_fus.X1,image_a_fus.Y1) % recupeeration de la taille maximale!
             
-            %coin1 = [1,1];
-            %coin2 = [x_largeurboite,y_hauteurboite];
+            image_boite_mask = zeros(floor(y_hauteurboite),floor(x_largeurboite),floor(obj.profondeur));
+            
+            coin1_boite_finale = [1,1];
+%             coin2_boite_finale = [x_largeurboite,y_hauteurboite];
             
             
-         %prendre la liste de l'objet Xliste Yliste et faire la différence
-         %avec le coin1 de l'image finale
+         %Calcul de l'Ã©cart entre l'image qui reÃ§oit la fusion et la boÃ®te
+         %englobante finale
+         diffx = obj.Xliste(1) - coin1_boite_finale(1);
+         diffy = obj.Yliste(1) - coin1_boite_finale(2);
          
          
-         %prendre la liste de image a fusioner Xlistefus Ylistefus
-         %avec le coin 1 de l'image finale
-         %image_a_fus.Xliste
+         %Calcul de l'Ã©cart entre l'image Ã  fusionner et la boÃ®te
+         %englobante finale
+         diffx_a_fus = round(abs(image_a_fus.Xliste(1) - coin1_boite_finale(1)));
+         diffy_a_fus = round(abs(image_a_fus.Yliste(1) - coin1_boite_finale(2)));
             
          
          %Faire la copie des des pixels en parcourant les deux  images et en copiant chaque pixel dans l'image final 
-         % a faire pour le image_mask et image_intensité
-        
+         % a faire pour le image_mask et image_intensitï¿½
+         for x=1:length(obj.Xliste)
+             for y=1:length(obj.Yliste)
+                image_boite_mask(x+diffx,y+diffy) = obj.image_mask(x,y);
+                image_boite_mask(x+diffx_a_fus,y+diffy_a_fus)= image_a_fus.image_mask(x,y);
+             end
+         end
+         
+         figure,imshow(image_boite_mask);
          
          %Reacfecter les variables a l'objet 
             
         end
         % Fonction 
-        function [x_largeur,y_largeur] = nvboite(X1,Y1,X2,Y2)
+        function [xlargeur,ylargeur] = nvboite(X1,Y1,X2,Y2)
             
-            xmax = max(X1,X2);
-            xmin = min(X1,X2);
-            ymax = max(Y1,Y2);
-            ymin = min(Y1,Y2);
+            xmax = max(max(X1,X2));
+            xmin = min(min(X1,X2));
+            ymax = max(max(Y1,Y2));
+            ymin = min(min(Y1,Y2));
             
-            x_largeur = abs(xmin-xmax);
-            y_largeur = abs(ymin-ymax);
+            xlargeur = abs(xmin-xmax);
+            ylargeur = abs(ymin-ymax);
                  
         end
-        
-        
         
         function affichage(obj)
             

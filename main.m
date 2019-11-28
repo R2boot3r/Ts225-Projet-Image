@@ -19,10 +19,10 @@ b = Image('img6.jpg');
 [H] = homographyEstimate(a.getCoordx,a.getCoordy,b.getCoordx,b.getCoordy,npoints);
 
 
-
 b.Homography(H);
-% % a.Homography(inv(H));
+a.Homography(inv(H));
 
+b.fusion(a);
 
-b.affichage();
+% b.affichage();
 
