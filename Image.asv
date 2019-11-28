@@ -5,10 +5,10 @@ classdef Image < handle
     properties (SetAccess = private)
         image_intensite,
         image_mask,
-        largeur,
-        hauteur,
+        coin1,
+        coin2,
         profondeur,
-        X1,
+        X1, %ginput du debut
         Y1,
         Xliste,
         Yliste;
@@ -20,9 +20,16 @@ classdef Image < handle
         function obj = Image(image)
             %IMAGE Construct an instance of this class
             %   Detailed explanation goes here
-            obj.image_intensite = double(imread(image));                                    % creation de la matrice qui contient les intensitï¿½s
-            [obj.hauteur, obj.largeur, obj.profondeur] = size(obj.image_intensite);         % crï¿½ation des dimensions
-            obj.image_mask = ones(obj.hauteur,obj.largeur,obj.profondeur).*255;             % crï¿½ation d'un mask qui est initialisï¿½ a 1 entiï¿½rement
+            obj.image_intensite = double(imread(image));% creation de la matrice qui contient les intensitï¿½s
+            
+            
+            [hauteur,largeur, obj.profondeur] = size(obj.image_intensite); 
+            
+            obj.coin1 = [1,1];
+            obj.coin2 = [hauteur,largeur];
+            
+            % crï¿½ation des dimensions
+            obj.image_mask = ones(hauteur,largeur,obj.profondeur).*255;             % crï¿½ation d'un mask qui est initialisï¿½ a 1 entiï¿½rement
             figure, imshow(image);
             [obj.X1,obj.Y1] = ginput(4);
         end
@@ -33,8 +40,12 @@ classdef Image < handle
             % on va calculer d'abord les extremitï¿½ de l'image pour crï¿½e
             % l'image de la bonne taille avec les cotï¿½ noir
             
-            X = [1 obj.largeur obj.largeur 1];
-            Y = [1 1 obj.hauteur obj.hauteur];
+            largeur = obj.coin2(1)-obj.coin1(1);
+            hauteur = obj.coin2(2)-obj.coin1(2);
+            
+            
+            X = [1 largeur largeur 1];
+            Y = [1 1 hauteur hauteur];
             s = 1;
             
             %calcule des positions extremes
@@ -68,12 +79,11 @@ classdef Image < handle
             
             for y = 1:y_hauteur
                 for x = 1:x_largeur
-                    %x = x+abs(x_homography_min;
-                    %y = y + y_homography_min;
+
                     v1 = [x+x_homography_min;y+y_homography_min;s]; % a voir si on enlève la valeur absolue -
                     v2 = H*v1;
                     v3 = round(v2/v2(3,1));
-                    if ((( 1 <= v3(2,1)) && (v3(2,1)<= obj.hauteur)) && ((( 1 <= v3(1,1)) && (v3(1,1)<= obj.largeur))))
+                    if ((( 1 <= v3(2,1)) && (v3(2,1)<= hauteur)) && ((( 1 <= v3(1,1)) && (v3(1,1)<= largeur))))
                     
                         image_homography(y,x,:) = obj.image_intensite(v3(2,1),v3(1,1),:);
                         image_homography_mask(y,x,:) = 255; % on met en blanc tout les pixels de l'image a mettre en binaire en vrai pour faire des opï¿½rations logique
@@ -85,31 +95,41 @@ classdef Image < handle
             obj.image_intensite =  image_homography;
             obj.image_mask = image_homography_mask;
            
-            %figure, imshow(uint8(image_homography));
-            %size(image_homography)
-            %figure, imshow(uint8(image_homography_mask));
-            obj.hauteur = y_hauteur; % permet de récuprer l'emplacement de l'image par rapport a l'autre image
-            obj.largeur = x_largeur;
+
+            obj.coin1 = [y_homography_min,x_homography_min];
+            obj.coin2 = [y_homography_max,x_homography_max] ;
+            
             %obj.Xliste = 1+abs(x_homography_min):1:abs(x_homography_max); % permet de décaller correctement les indices 
             %obj.Yliste = 1+abs(y_homography_min):1:abs(y_homography_max);
         end
         
         function obj = fusion(image_a_fus)
-            [x_largeurboite,y_hauteurboite] = nvboite(image_a_fus.X1,image_a_fus.Y1); % recupeeration de la taille maximale!
-            
+            [x_largeurboite,y_hauteurboite] = nvboite(obj.X1,obj.Y1,image_a_fus.X1,image_a_fus.Y1); % recupeeration de la taille maximale!
             
             image_boite_mask = zeros(y_hauteurboite,x_largeurboite,obj.profondeur);
             
+            %coin1 = [1,1];
+            %coin2 = [x_largeurboite,y_hauteurboite];
             
+            
+         %prendre la liste de l'objet Xliste Yliste et faire la différence
+         %avec le coin1 de l'image finale
+         
+         
+         %prendre la liste de image a fusioner Xlistefus Ylistefus
+         %avec le coin 1 de l'image finale
+         
+            
+         %Reacfecter les variables a l'objet 
             
         end
         % Fonction 
-        function [x_largeur,y_largeur] = nvboite(X2,Y2)
+        function [x_largeur,y_largeur] = nvboite(X1,Y1,X2,Y2)
             
-            xmax = max(obj.X1,X2);
-            xmin = min(obj.X1,X2);
-            ymax = max(obj.Y1,Y2);
-            ymin = min(obj.Y1,Y2);
+            xmax = max(X1,X2);
+            xmin = min(X1,X2);
+            ymax = max(Y1,Y2);
+            ymin = min(Y1,Y2);
             
             x_largeur = abs(xmin-xmax);
             y_largeur = abs(ymin-ymax);
