@@ -20,9 +20,10 @@ b = Image('img6.jpg');
 
 
 b.Homography(H);
-a.Homography(inv(H));
+
+%a.Homography(inv(H));
 
 b.fusion(a);
 
-% b.affichage();
+b.affichage();
 
