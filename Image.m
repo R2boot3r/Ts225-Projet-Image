@@ -72,8 +72,8 @@ classdef Image < handle
             y_homography_min = min(Y);
             
             
-            x_largeur = abs(x_homography_max-x_homography_min); %calcule des valeurs de largeur et de hauteur de li'mage 
-            y_hauteur = abs(y_homography_max-y_homography_min);
+            x_largeur = abs(x_homography_max-x_homography_min) %calcule des valeurs de largeur et de hauteur de li'mage 
+            y_hauteur = abs(y_homography_max-y_homography_min)
             
             %%%%%%%%% Création des listes X et Y 
             obj.Xliste = 1+x_homography_min:1:x_homography_max; % permet de dï¿½caller correctement les indices 
@@ -92,9 +92,10 @@ classdef Image < handle
                     v1 = [x+x_homography_min;y+y_homography_min;s]; % création avec le décalage des coordonnées a parcourir dans l'autre image
                     v2 = H*v1;
                     v3 = round(v2/v2(3,1));
-                    
-                    
-                    if ((( 1 <= v3(2,1)) && (v3(2,1)<= hauteur)) && ((( 1 <= v3(1,1)) && (v3(1,1)<= largeur)))) % Vérification pour voir si les coordonnées d'arriver sont dans l'image de départ 
+                    %%%%
+                    %%%% il semble y avoir une inversion sur les coordonées
+                    %%%% je ne comprend pas pk a voir
+                    if ((( 1 <= v3(2,1)) && (v3(2,1)<= largeur)) && ((( 1 <= v3(1,1)) && (v3(1,1)<= hauteur)))) % Vérification pour voir si les coordonnées d'arriver sont dans l'image de départ 
                         v3(2,1);
                         image_homography(y,x,:) = obj.image_intensite(v3(2,1),v3(1,1),:); % recopie des pixels necessaires
                         image_homography_mask(y,x,:) = 1; % on met en blanc tout les pixels de l'image a mettre en binaire en vrai pour faire des opï¿½rations logique

@@ -11,9 +11,9 @@ addpath('./images');
 
 npoints = 4;
 
-a = Image('img7.jpg');
+a = Image('uttower1.jpg');
 
-b = Image('img6.jpg');
+b = Image('uttower2.jpg');
 
 
 [H] = homographyEstimate(a.getCoordx,a.getCoordy,b.getCoordx,b.getCoordy,npoints);
