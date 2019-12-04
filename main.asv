@@ -11,9 +11,9 @@ addpath('./images');
 
 npoints = 4;
 
-a = Image('img6.jpg');
+a = Image('img6.');
 
-b = Image('img7.jpg');
+b = Image('2.png');
 
 tic
 
@@ -26,8 +26,6 @@ toc
 b.Homography(H);
 toc
 b.fusion(a);
-b.affichage();
-
 %a.fusion(b);
 % 
 % b.getnewginput();
