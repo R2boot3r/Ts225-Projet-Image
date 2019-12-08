@@ -17,7 +17,7 @@ b = Image('img7.jpg');
 
 tic
 
-
+;
 [H] = homographyEstimate(a.getCoordx,a.getCoordy,b.getCoordx,b.getCoordy,npoints);
 toc
 %[H2] = homographyEstimate(b2.getCoordx,b2.getCoordy,a2.getCoordx,a2.getCoordy,npoints);
@@ -26,6 +26,7 @@ toc
 b.Homography(H);
 toc
 b.fusion(a);
+%a.fusion(b);
 b.affichage();
 
 %a.fusion(b);

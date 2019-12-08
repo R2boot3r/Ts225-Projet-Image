@@ -69,8 +69,12 @@ classdef Image < handle
             y_homography_min = min(Y);
             
             
-            x_largeur = abs(x_homography_max-x_homography_min); %calcule des valeurs de largeur et de hauteur de li'mage 
-            y_hauteur = abs(y_homography_max-y_homography_min);
+
+            
+            
+                        
+            x_largeur = x_homography_max-x_homography_min+1 %calcule des valeurs de largeur et de hauteur de li'mage 
+            y_hauteur = y_homography_max-y_homography_min+1 % a voir pourquoi oj rajoute pas de 1
             
             %%%%%%%%% Création des listes X et Y 
             %obj.Xliste = 1+x_homography_min:1:x_homography_max; % permet de dï¿½caller correctement les indices 
@@ -126,10 +130,11 @@ classdef Image < handle
 
          % Calcule de la largeur de l'image global
          
-         largeur_fus = abs(coinhautfus(2))+abs(coinbasfus(2)) + 1
-         hauteur_fus = abs(coinhautfus(1))+abs(coinbasfus(1)) + 1
-%          largeur_fus = coinbasfus(2)-coinhautfus(2) + 1
-%          hauteur_fus = coinbasfus(1)-coinhautfus(1) + 1
+%          largeur_fus = abs(coinhautfus(2))+abs(coinbasfus(2)) + 1
+%          hauteur_fus = abs(coinhautfus(1))+abs(coinbasfus(1)) + 1
+         
+         largeur_fus = coinbasfus(2)-coinhautfus(2) + 1;
+         hauteur_fus = coinbasfus(1)-coinhautfus(1) + 1;
 %          
          
          %Creation des varaibles d'image pour la fusion
@@ -139,29 +144,29 @@ classdef Image < handle
          image_mask_fus = zeros(hauteur_fus,largeur_fus,obj.profondeur);
         
          
-         %Calcule des coordonées décales pour l'image de l'objet
-         ymin = (obj.coinhaut(1)+ abs(coin(1,1))+1)
-         ymax = (obj.coinbas(1)+ abs(coin(1,1)))
-         xmin = (obj.coinhaut(2)+ abs(coin(1,2))+1)
-         xmax = (obj.coinbas(2)+ abs(coin(1,2)))
+%          %Calcule des coordonées décales pour l'image de l'objet
+%          ymin = (obj.coinhaut(1)+ abs(coin(1,1))+1)
+%          ymax = (obj.coinbas(1)+ abs(coin(1,1)))
+%          xmin = (obj.coinhaut(2)+ abs(coin(1,2))+1)
+%          xmax = (obj.coinbas(2)+ abs(coin(1,2)))
 %          
-         ymin1 = (obj.coinhaut(1)-coin(1,1))+1
-         ymax1 = (obj.coinbas(1)-coin(1,1))+1
-         xmin1 = (obj.coinhaut(2) -coin(1,2))+1
-         xmax1 = (obj.coinbas(2) -coin(1,2))+1
+         ymin = (obj.coinhaut(1)-coin(1,1))+1
+         ymax = (obj.coinbas(1)-coin(1,1))+1
+         xmin = (obj.coinhaut(2) -coin(1,2))+1
+         xmax = (obj.coinbas(2) -coin(1,2))+1
          
          
          %Calcule des coordonées décales pour l'image en paramètre de la
          %fusion
-         ymin_image_a_fus = (image_a_fus.coinhaut(1)+abs(coin(1,1)))
-         ymax_image_a_fus = (image_a_fus.coinbas(1)+ abs(coin(1,1)))
-         xmin_image_a_fus = (image_a_fus.coinhaut(2)+ abs(coin(1,2)))
-         xmax_image_a_fus = (image_a_fus.coinbas(2)+ abs(coin(1,2)))
+%          ymin_image_a_fus = (image_a_fus.coinhaut(1)+abs(coin(1,1)))
+%          ymax_image_a_fus = (image_a_fus.coinbas(1)+ abs(coin(1,1)))
+%          xmin_image_a_fus = (image_a_fus.coinhaut(2)+ abs(coin(1,2)))
+%          xmax_image_a_fus = (image_a_fus.coinbas(2)+ abs(coin(1,2)))
          
-         ymin_image_a_fus1 = (image_a_fus.coinhaut(1)-coin(1,1))
-         ymax_image_a_fus1 = (image_a_fus.coinbas(1)-coin(1,1))
-         xmin_image_a_fus1 = (image_a_fus.coinhaut(2)-coin(1,2))
-         xmax_image_a_fus1 = (image_a_fus.coinbas(2)-coin(1,2))
+         ymin_image_a_fus = (image_a_fus.coinhaut(1)-coin(1,1))+1;
+         ymax_image_a_fus = (image_a_fus.coinbas(1)-coin(1,1))+1;
+         xmin_image_a_fus = (image_a_fus.coinhaut(2)-coin(1,2))+1;
+         xmax_image_a_fus = (image_a_fus.coinbas(2)-coin(1,2))+1;
         
          
          
