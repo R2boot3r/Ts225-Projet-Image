@@ -43,8 +43,8 @@ classdef Image < handle
             % dans une nouvelle base
             
             
-            largeur = obj.coinbas(1)-obj.coinhaut(1)+1; %Calcule des largeur et hauteur pour  obtenir les autres  coordonées des coins de l'iamge
-            hauteur = obj.coinbas(2)-obj.coinhaut(2)+1;
+            hauteur = obj.coinbas(1)-obj.coinhaut(1)+1; %Calcule des largeur et hauteur pour  obtenir les autres  coordonées des coins de l'iamge
+            largeur = obj.coinbas(2)-obj.coinhaut(2)+1;
             
             
             X = [1 obj.coinbas(2) obj.coinbas(2) 1]; % Coordonnées de de les coins de l'image
@@ -67,14 +67,10 @@ classdef Image < handle
             y_homography_max = max(Y);
             x_homography_min = min(X);
             y_homography_min = min(Y);
+                        
+            x_largeur = x_homography_max-x_homography_min+1; %calcule des valeurs de largeur et de hauteur de li'mage 
+            y_hauteur = y_homography_max-y_homography_min+1; % a voir pourquoi oj rajoute pas de 1
             
-            
-            x_largeur = abs(x_homography_max-x_homography_min); %calcule des valeurs de largeur et de hauteur de li'mage 
-            y_hauteur = abs(y_homography_max-y_homography_min);
-            
-            %%%%%%%%% Création des listes X et Y 
-            %obj.Xliste = 1+x_homography_min:1:x_homography_max; % permet de dï¿½caller correctement les indices 
-            %obj.Yliste = 1+y_homography_min:1:y_homography_max;
             
             %%%%%%%%% Création des nouvelles variable pour la nouvelle 
             image_homography = zeros(y_hauteur,x_largeur,obj.profondeur);
@@ -92,7 +88,7 @@ classdef Image < handle
                     %%%%
                     %%%% il semble y avoir une inversion sur les coordonées
                     %%%% je ne comprend pas pk a voir
-                    if ((( 1 <= v3(2,1)) && (v3(2,1)<= largeur)) && ((( 1 <= v3(1,1)) && (v3(1,1)<= hauteur)))) % Vérification pour voir si les coordonnées d'arriver sont dans l'image de départ 
+                    if ((( 1 <= v3(2,1)) && (v3(2,1)<= hauteur)) && ((( 1 <= v3(1,1)) && (v3(1,1)<= largeur)))) % Vérification pour voir si les coordonnées d'arriver sont dans l'image de départ 
                         v3(2,1);
                         image_homography(y,x,:) = obj.image_intensite(v3(2,1),v3(1,1),:); % recopie des pixels necessaires
                         image_homography_mask(y,x,:) = 1; % on met en blanc tout les pixels de l'image a mettre en binaire en vrai pour faire des opï¿½rations logique
@@ -126,10 +122,11 @@ classdef Image < handle
 
          % Calcule de la largeur de l'image global
          
-         largeur_fus = abs(coinhautfus(2))+abs(coinbasfus(2)) + 1
-         hauteur_fus = abs(coinhautfus(1))+abs(coinbasfus(1)) + 1
-%          largeur_fus = coinbasfus(2)-coinhautfus(2) + 1
-%          hauteur_fus = coinbasfus(1)-coinhautfus(1) + 1
+%          largeur_fus = abs(coinhautfus(2))+abs(coinbasfus(2)) + 1
+%          hauteur_fus = abs(coinhautfus(1))+abs(coinbasfus(1)) + 1
+         
+         largeur_fus = coinbasfus(2)-coinhautfus(2) + 1;
+         hauteur_fus = coinbasfus(1)-coinhautfus(1) + 1;
 %          
          
          %Creation des varaibles d'image pour la fusion
@@ -138,50 +135,47 @@ classdef Image < handle
          %taille_image1 = size( image_intensite_fus)
          image_mask_fus = zeros(hauteur_fus,largeur_fus,obj.profondeur);
         
-         
-         %Calcule des coordonées décales pour l'image de l'objet
-         ymin = (obj.coinhaut(1)+ abs(coin(1,1))+1);
-         ymax = (obj.coinbas(1)+ abs(coin(1,1)));
-         xmin = (obj.coinhaut(2)+ abs(coin(1,2))+1);
-         xmax = (obj.coinbas(2)+ abs(coin(1,2)));
-%          
-%          ymin = (obj.coinhaut(1)-coin(1,1))+1;
-%          ymax = (obj.coinbas(1)-coin(1,1))+1;
-%          xmin = (obj.coinhaut(2) -coin(1,2))+1;
-%          xmax = (obj.coinbas(2) -coin(1,2))+1;
+               
+         ymin = (obj.coinhaut(1)-coin(1,1))+1;
+         ymax = (obj.coinbas(1)-coin(1,1))+1;
+         xmin = (obj.coinhaut(2) -coin(1,2))+1;
+         xmax = (obj.coinbas(2) -coin(1,2))+1;
          
          
          %Calcule des coordonées décales pour l'image en paramètre de la
          %fusion
-         ymin_image_a_fus = (image_a_fus.coinhaut(1)+abs(coin(1,1)));
-         ymax_image_a_fus = (image_a_fus.coinbas(1)+ abs(coin(1,1)));
-         xmin_image_a_fus = (image_a_fus.coinhaut(2)+ abs(coin(1,2)));
-         xmax_image_a_fus = (image_a_fus.coinbas(2)+ abs(coin(1,2)));
+
          
-         
+         ymin_image_a_fus = (image_a_fus.coinhaut(1)-coin(1,1))+1;
+         ymax_image_a_fus = (image_a_fus.coinbas(1)-coin(1,1))+1;
+         xmin_image_a_fus = (image_a_fus.coinhaut(2)-coin(1,2))+1;
+         xmax_image_a_fus = (image_a_fus.coinbas(2)-coin(1,2))+1;
         
          
          
          % Affectation et fusion de images dans l'image final
          
          %image mask
-         image_mask_fus(ymin:ymax,xmin:xmax,:) = obj.image_mask + image_mask_fus(ymin:ymax,xmin:xmax,:); %% il faut comprendre pourquoi on ne doit pas décaler de 1 sur es ymax et xmax ???
+         %image_mask_fus(ymin:ymax,xmin:xmax,:) = obj.image_mask + image_mask_fus(ymin:ymax,xmin:xmax,:); %% il faut comprendre pourquoi on ne doit pas décaler de 1 sur es ymax et xmax ???
          image_mask_fus(ymin_image_a_fus:ymax_image_a_fus,xmin_image_a_fus:xmax_image_a_fus,:) = image_a_fus.image_mask + image_mask_fus(ymin_image_a_fus:ymax_image_a_fus,xmin_image_a_fus:xmax_image_a_fus,:); % 
-
+         image_mask_fus(ymin:ymax,xmin:xmax,:) = obj.image_mask + image_mask_fus(ymin:ymax,xmin:xmax,:); %% il faut comprendre pourquoi on ne doit pas décaler de 1 sur es ymax et xmax ???
          %image intensité
          image_intensite_fus(ymin:ymax,xmin:xmax,:) = obj.image_intensite + image_intensite_fus(ymin:ymax,xmin:xmax,:);
          image_intensite_fus(ymin_image_a_fus:ymax_image_a_fus,xmin_image_a_fus:xmax_image_a_fus,:) = image_a_fus.image_intensite + image_intensite_fus(ymin_image_a_fus:ymax_image_a_fus,xmin_image_a_fus:xmax_image_a_fus,:);
         
          
          
-         image_mask_fus(image_mask_fus==0) = -1; % on passe les valeurs nul en négative pour la division par le mask
+%          image_mask_fus(image_mask_fus==0) = -1; % on passe les valeurs nul en négative pour la division par le mask
+%          
+%          image_intensite_fus = image_intensite_fus./image_mask_fus; % On divise chaque valeur de l'image par le mask 
+%          
+%          image_intensite_fus = abs(image_intensite_fus); % on repasse toutes les valeurs négative du masque à 0
+%          %taille_image2 = size( image_intensite_fus) 
+%           % on repasse toutes les valeurs du mask a 1 pour une prochaine fusion
+%          image_mask_fus(image_mask_fus<0) = 0;
          
-         image_intensite_fus = image_intensite_fus./image_mask_fus; % On divise chaque valeur de l'image par le mask d'intensité
-         
-         image_intensite_fus(image_intensite_fus<0) = 0; % on repasse toutes les valeurs négative du masque à 0
-         %taille_image2 = size( image_intensite_fus) 
-         
-
+         image_intensite_fus = image_intensite_fus./( image_mask_fus+ (image_mask_fus==0) ); %remplacement de l'opération prédédente par ce calcule
+         image_mask_fus(image_mask_fus>0) = 1;
          
          
          %Reacfectation des variables de l'objet 
@@ -191,12 +185,7 @@ classdef Image < handle
          obj.coinhaut = coinhautfus;
          obj.coinbas = coinbasfus;
         end
-        
-        
-        
-
-
-        
+               
         function affichage(obj)
         % Fonction qui permet de faire l'affiche d'une image
         
@@ -215,7 +204,10 @@ classdef Image < handle
             [obj.X1,obj.Y1] = ginput(4);
         
         end
-        
+        function obj = modifmask(obj)
+           obj.image_mask(obj.image_mask>0) = 255;
+            
+        end
         
         
         
